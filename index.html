@@ -229,10 +229,24 @@
         </div>
     </div>
 
-    <script>
+   <script>
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
         const spinBtn = document.getElementById('spinBtn');
+
+        // --- 畫質提升核心邏輯 ---
+        const dpr = window.devicePixelRatio || 1; // 取得螢幕像素比例
+        const size = 380; // 轉盤的邏輯尺寸
+
+        // 設定 CSS 顯示尺寸
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        // 設定 Canvas 實際渲染尺寸 (根據螢幕比例放大)
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        // 將繪圖座標系等比例放大，後續繪圖數值不需改變
+        ctx.scale(dpr, dpr);
+        // -----------------------
         
         // 預設資料 (包含文字與是否啟用)
         let defaultFoods = [
@@ -241,7 +255,7 @@
             { name: '🍱 壽司', active: true },
             { name: '🍔 漢堡薯條', active: true },
             { name: '🥗 健康餐盒', active: true },
-            { name: '🥟 巷口水餃', active: false } // 預設一個沒打勾的展示功能
+            { name: '🥟 巷口水餃', active: false }
         ];
 
         // 實用邏輯：從 LocalStorage 讀取資料，若沒有才用預設值
@@ -265,11 +279,12 @@
 
         // 畫出輪盤
         function drawWheel() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 改用邏輯尺寸 (size) 清除畫布
+            ctx.clearRect(0, 0, size, size); 
             const activeFoods = getActiveFoods();
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = canvas.width / 2;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size / 2;
 
             if(activeFoods.length === 0) {
                 ctx.beginPath();
